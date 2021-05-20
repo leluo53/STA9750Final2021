@@ -23,6 +23,22 @@ dt = sort(sample(nrow(df2), nrow(df2)*.7))
 train<-df2[dt,]
 test<-df2[-dt,]
 ```
+```{r}
+# standardlzie the data
+library(standardize)
+sd_train <- train
+sd_test <- test
+my_range <- 2:29
+
+for (i in my_range){
+  train_mean = mean(train[,i])
+  train_sd = sd(train[,i])
+  sd_train[,i]=(train[,i]-train_mean)/train_sd
+  sd_test[,i]=(test[,i]-train_mean)/train_sd
+    }
+```
+
+
 
 ```{r Run Logistic Regression, echo=FALSE}
 # run logistic regression model
