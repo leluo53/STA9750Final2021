@@ -18,6 +18,7 @@ df2 <- df1 %>%
   select(-c(Avg_Open_To_Buy, Marital_Status.Unknown., Education_Level.Unknown., Income_Category.Unknown.,Card_Category.Platinum.))
   
 # split the data into train(70%) and test(30%) randomly.
+set.seed(53)
 dt = sort(sample(nrow(df2), nrow(df2)*.7))
 train<-df2[dt,]
 test<-df2[-dt,]
