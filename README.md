@@ -1,4 +1,4 @@
-```{r Categorical Variable Processing}
+```{r Categorical Variable Processing, echo=FALSE}
 # 1 and 0 in 'Attrition_Flag'
 df$Attrition_Flag<- ifelse(df$Attrition_Flag=="Existing Customer",1, 
                       ifelse(df$Attrition_Flag == "Attrited Customer",0,99))
@@ -12,7 +12,7 @@ df1=one_hot_encoding(df,c("Marital_Status","Education_Level","Income_Category","
 
 
 
-```{r Drop Uncessary Variable/Split data}
+```{r Drop Uncessary Variable/Split data, echo=FALSE}
 # drop columns below because there are perfectly correlated with others variables in model. There are shown as NA if exist.
 df2 <- df1 %>% 
   select(-c(Avg_Open_To_Buy, Marital_Status.Unknown., Education_Level.Unknown., Income_Category.Unknown.,Card_Category.Platinum.))
@@ -23,7 +23,7 @@ train<-df2[dt,]
 test<-df2[-dt,]
 ```
 
-```{r Run Logistic Regression}
+```{r Run Logistic Regression, echo=FALSE}
 # run logistic regression model
 glm.fits=glm(Attrition_Flag ~ .-Attrition_Flag ,
 data=train ,family =binomial(link='logit') )
