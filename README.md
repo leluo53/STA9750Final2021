@@ -48,4 +48,14 @@ summary(glm.fits)$call
 round(summary(glm.fits)$coef,4)
 ```
 
+```{r Evaluation AUC, echo=FALSE}
+library(pROC)
+#matrix evaluation for train and test
+train_prob = predict(glm, newdata = sd_train, type = "response")
+train_roc = roc(sd_train$Attrition_Flag ~ train_prob, plot = TRUE, print.auc = TRUE)
+as.numeric(train_roc$auc)
 
+test_prob = predict(glm, newdata = sd_test, type = "response")
+test_roc = roc(sd_test$Attrition_Flag ~ test_prob, plot = TRUE, print.auc = TRUE)
+as.numeric(test_roc$auc)
+```
