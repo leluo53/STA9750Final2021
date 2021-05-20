@@ -1,2 +1,34 @@
-# STA9750Final2021
-STA9750 Final 2021
+```{r Categorical Variable Processing}
+# 1 and 0 in 'Attrition_Flag'
+df$Attrition_Flag<- ifelse(df$Attrition_Flag=="Existing Customer",1, 
+                      ifelse(df$Attrition_Flag == "Attrited Customer",0,99))
+# 1 and 0 in 'Gender'
+df$Gender<- ifelse(df$Gender=="M",0, ifelse(df$Gender == "F",1,99))
+
+# one hot encoding for the rest
+library(creditmodel)
+df1=one_hot_encoding(df,c("Marital_Status","Education_Level","Income_Category","Card_Category"))
+```
+
+
+
+```{r Drop Uncessary Variable/Split data}
+# drop columns below because there are perfectly correlated with others variables in model. There are shown as NA if exist.
+df2 <- df1 %>% 
+  select(-c(Avg_Open_To_Buy, Marital_Status.Unknown., Education_Level.Unknown., Income_Category.Unknown.,Card_Category.Platinum.))
+  
+# split the data into train(70%) and test(30%) randomly.
+dt = sort(sample(nrow(df2), nrow(df2)*.7))
+train<-df2[dt,]
+test<-df2[-dt,]
+```
+
+```{r Run Logistic Regression}
+# run logistic regression model
+glm.fits=glm(Attrition_Flag ~ .-Attrition_Flag ,
+data=train ,family =binomial(link='logit') )
+summary(glm.fits)$call
+round(summary(glm.fits)$coef,4)
+```
+
+
