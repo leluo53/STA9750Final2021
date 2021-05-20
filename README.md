@@ -1,3 +1,4 @@
+### clean categorical data
 ```{r Categorical Variable Processing, echo=FALSE}
 # 1 and 0 in 'Attrition_Flag'
 df$Attrition_Flag<- ifelse(df$Attrition_Flag=="Existing Customer",1, 
@@ -11,20 +12,22 @@ df1=one_hot_encoding(df,c("Marital_Status","Education_Level","Income_Category","
 ```
 
 
-
+### drop uncessary variables based on correlation/ split data
 ```{r Drop Uncessary Variable/Split data, echo=FALSE}
 # drop columns below because there are perfectly correlated with others variables in model. There are shown as NA if exist.
 df2 <- df1 %>% 
   select(-c(Avg_Open_To_Buy, Marital_Status.Unknown., Education_Level.Unknown., Income_Category.Unknown.,Card_Category.Platinum.))
-  
+
 # split the data into train(70%) and test(30%) randomly.
 set.seed(53)
 dt = sort(sample(nrow(df2), nrow(df2)*.7))
 train<-df2[dt,]
 test<-df2[-dt,]
 ```
+
+### standardlize data
 ```{r, echo=FALSE}
-# standardlzie the data
+# standardlize the data
 library(standardize)
 sd_train <- train
 sd_test <- test
@@ -39,7 +42,7 @@ for (i in my_range){
 ```
 
 
-
+### run logistic regression model
 ```{r Run Logistic Regression, echo=FALSE}
 # run logistic regression model
 glm.fits=glm(Attrition_Flag ~ .-Attrition_Flag ,
@@ -48,6 +51,7 @@ summary(glm.fits)$call
 round(summary(glm.fits)$coef,4)
 ```
 
+### matrix evaluation by AUC and plots
 ```{r Evaluation AUC, echo=FALSE}
 library(pROC)
 #matrix evaluation for train and test
