@@ -54,12 +54,14 @@ round(summary(glm.fits)$coef,4)
 ### matrix evaluation by AUC and plots
 ```{r Evaluation AUC, echo=FALSE}
 library(pROC)
+
 #matrix evaluation for train and test
+par(mfcol=c(1,2))
 train_prob = predict(glm, newdata = sd_train, type = "response")
-train_roc = roc(sd_train$Attrition_Flag ~ train_prob, plot = TRUE, print.auc = TRUE)
+train_roc = roc(sd_train$Attrition_Flag ~ train_prob, plot = TRUE, print.auc = TRUE, main='ROC for Train')
 as.numeric(train_roc$auc)
 
 test_prob = predict(glm, newdata = sd_test, type = "response")
-test_roc = roc(sd_test$Attrition_Flag ~ test_prob, plot = TRUE, print.auc = TRUE)
+test_roc = roc(sd_test$Attrition_Flag ~ test_prob, plot = TRUE, print.auc = TRUE, main='ROC for Test ')
 as.numeric(test_roc$auc)
 ```
