@@ -1,0 +1,102 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
+```{r}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(ggplot2)
+library(reshape2)
+```
+
+```{r}
+setwd('C:/Users/luole/Desktop/R_final_project')
+library(dplyr)
+
+#import data
+df <- read.csv("BankChurners.csv")
+```
+
+```{r}
+# Remove Client Number and two naive bayes irrelevant columns in dataset
+df <- df %>% 
+  select(-c(CLIENTNUM, 
+            Naive_Bayes_Classifier_Attrition_Flag_Card_Category_Contacts_Count_12_mon_Dependent_count_Education_Level_Months_Inactive_12_mon_1, Naive_Bayes_Classifier_Attrition_Flag_Card_Category_Contacts_Count_12_mon_Dependent_count_Education_Level_Months_Inactive_12_mon_2))
+```
+
+```{r}
+count_attr <- df %>%
+  count(Attrition_Flag)
+count_attr[1,2]
+
+round((count_attr[1,2]/count(df['Attrition_Flag']) * 100), 2)
+```
+```{r}
+ggplot(df , aes(x=Attrition_Flag, fill = Attrition_Flag, show.legend = FALSE)) + 
+  geom_bar() +
+  ggtitle("Attrition Count") +
+  xlab("Type of Customer") + ylab("Count") +
+  theme(legend.position = "none")
+```
+
+```{r message=FALSE}
+# 1 and 0 in 'Attrition_Flag'
+df$Attrition_Flag<- ifelse(df$Attrition_Flag=="Existing Customer",1, 
+                      ifelse(df$Attrition_Flag == "Attrited Customer",0,99))
+
+# 1 and 0 in 'Gender'
+df$Gender<- ifelse(df$Gender=="M",0, ifelse(df$Gender == "F",1,99))
+
+# one hot encoding for the rest
+library(creditmodel)
+df1=one_hot_encoding(df,c("Marital_Status","Education_Level","Income_Category","Card_Category"))
+```
+
+```{r}
+explore_df <- df %>%
+  select(Attrition_Flag,Customer_Age,Dependent_count, Months_on_book,	Total_Relationship_Count,	Months_Inactive_12_mon,	Contacts_Count_12_mon,	Credit_Limit,	Total_Revolving_Bal,	Avg_Open_To_Buy,	Total_Amt_Chng_Q4_Q1,	Total_Trans_Amt,	Total_Trans_Ct,	Total_Ct_Chng_Q4_Q1,	Avg_Utilization_Ratio)
+cormat <- round(cor(explore_df),2)
+
+melted_cormat <- melt(cormat)
+
+# Get upper triangle of the correlation matrix
+get_upper_tri <- function(cormat){
+  cormat[lower.tri(cormat)]<- NA
+  return(cormat)}
+
+upper_tri <- get_upper_tri(cormat)
+
+
+melted_cormat <- melt(upper_tri, na.rm = TRUE)
+ggplot(data = melted_cormat, aes(Var2, Var1, fill = value))+
+ geom_tile(color = "white")+ 
+ scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
+   midpoint = 0, limit = c(-1,1), space = "Lab", 
+   name="Correlation") +
+  theme_minimal()+ 
+ theme(axis.text.x = element_text(angle = 45, vjust = 1, 
+    size = 9, hjust = 1)) +
+  geom_text(aes(Var2, Var1, label = value), color = "black", size = 2)
+```
+
+```{r}
+# drop columns below because there are perfectly correlated with others variables in model. There are shown as NA if exist.
+df2 <- df1 %>% 
+  select(-c(Avg_Open_To_Buy, Marital_Status.Unknown., Education_Level.Unknown., Income_Category.Unknown.,Card_Category.Platinum.))
+
+# split the data into train(70%) and test(30%) randomly.
+dt = sort(sample(nrow(df2), nrow(df2)*.7))
+train<-df2[dt,]
+test<-df2[-dt,]
+```
+
+```{r}
+# run logistic regression model
+glm.fits=glm(Attrition_Flag ~ .-Attrition_Flag ,
+data=train ,family =binomial(link='logit') )
+summary(glm.fits)$call
+round(summary(glm.fits)$coef,4)
+```
+
+
