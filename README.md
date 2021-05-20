@@ -23,7 +23,7 @@ dt = sort(sample(nrow(df2), nrow(df2)*.7))
 train<-df2[dt,]
 test<-df2[-dt,]
 ```
-```{r}
+```{r, echo=FALSE}
 # standardlzie the data
 library(standardize)
 sd_train <- train
