@@ -43,12 +43,17 @@ for (i in my_range){
 
 
 ### run logistic regression model
-```{r Run Logistic Regression, echo=FALSE}
+```{r Run model, echo=FALSE}
 # run logistic regression model
-glm.fits=glm(Attrition_Flag ~ .-Attrition_Flag ,
-data=train ,family =binomial)
-summary(glm.fits)$call
-round(summary(glm.fits)$coef,4)
+glm=glm(Attrition_Flag ~ .-Attrition_Flag ,
+data=sd_train ,family =binomial)
+summary(glm)$call
+summary<-round(summary(glm)$coef,4)
+knitr::kable(
+  head(summary[order(abs(summary[,1]),decreasing = TRUE),],13), 
+  caption = "Coefficient Table for Logistic Regression"
+)
+
 ```
 
 ### matrix evaluation by AUC and plots
