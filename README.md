@@ -46,7 +46,7 @@ for (i in my_range){
 ```{r Run Logistic Regression, echo=FALSE}
 # run logistic regression model
 glm.fits=glm(Attrition_Flag ~ .-Attrition_Flag ,
-data=train ,family =binomial(link='logit') )
+data=train ,family =binomial)
 summary(glm.fits)$call
 round(summary(glm.fits)$coef,4)
 ```
