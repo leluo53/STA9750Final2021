@@ -46,7 +46,7 @@ for (i in my_range){
 ```
 
 ##### Model summary
-The table is sorted by Estimate in descending order. All numbers are round in 4 digits.
+The table is sorted by absolute value of Estimate in descending order. All numbers are round in 4 digits.
 ```{r, echo=FALSE}
 # run logistic regression model
 glm=glm(Attrition_Flag ~ .-Attrition_Flag ,
