@@ -13,7 +13,7 @@ df1=one_hot_encoding(df1,c("Marital_Status","Education_Level","Income_Category",
 
 We decided to remove some attributes from logistic regression modeling because logistic regression cannot handle high correlated variables well. Based on the correlation head map shown above, we found three pairs of attributes with strong correlation. They are:
 
-- Customer_Age vs. Months_on_book 
+- Customer_Age vs. Months_On_Book 
 - Credit_Limit vs. Avg_Open_To_Buy
 - Total_Trans_Amt vs. Total_Trans_Ct
 
